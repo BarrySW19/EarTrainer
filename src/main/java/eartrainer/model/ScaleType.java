@@ -3,13 +3,16 @@ package eartrainer.model;
 public class ScaleType {
     private final int[] intervals;
 
-    public static final ScaleType MAJOR = new ScaleType(2, 2, 1, 2, 2, 2, 1);
+    public static final ScaleType IONIAN = new ScaleType(2, 2, 1, 2, 2, 2, 1);
     public static final ScaleType DORIAN = new ScaleType(2, 1, 2, 2, 2, 1, 2);
     public static final ScaleType PHRYGIAN = new ScaleType(1, 2, 2, 2, 1, 2, 2);
     public static final ScaleType LYDIAN = new ScaleType(2, 2, 2, 1, 2, 2, 1);
     public static final ScaleType MIXOLYDIAN = new ScaleType(2, 2, 1, 2, 2, 1, 2);
-    public static final ScaleType AOLIAN = new ScaleType(2, 1, 2, 2, 1, 2, 2);
+    public static final ScaleType AEOLIAN = new ScaleType(2, 1, 2, 2, 1, 2, 2);
     public static final ScaleType LOCRIAN = new ScaleType(1, 2, 2, 1, 2, 2, 2);
+
+    public static final ScaleType MAJOR = IONIAN;
+    public static final ScaleType MINOR = AEOLIAN;
 
     public static final ScaleType MINOR_PENTATONIC = new ScaleType(3, 2, 2, 3, 2);
     public static final ScaleType BLUES = new ScaleType(3, 2, 1, 1, 3, 2);

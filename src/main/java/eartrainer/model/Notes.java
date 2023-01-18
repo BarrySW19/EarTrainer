@@ -9,6 +9,10 @@ public class Notes {
         this.midiNotes = chordType.notesFromRoot(root);
     }
 
+    public Notes(int... notes) {
+        this.midiNotes = notes;
+    }
+
     public Notes(ScaleType scaleType, int root) {
         this.midiNotes = scaleType.notesFromRoot(root);
     }
