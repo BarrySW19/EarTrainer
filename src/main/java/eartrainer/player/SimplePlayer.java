@@ -20,13 +20,41 @@ public class SimplePlayer {
         Sequence sequence = new Sequence(PPQ, PULSES_PER_NOTE);
 
         Track track = sequence.createTrack();
-        track.add(new MidiEvent(new ShortMessage(ShortMessage.PROGRAM_CHANGE, 0, 0, 0), 0));
-        track.add(new MidiEvent(new ShortMessage(ShortMessage.PROGRAM_CHANGE, 1, 4, 0), 0));
+        track.add(new MidiEvent(new ShortMessage(ShortMessage.PROGRAM_CHANGE, 0, 42, 0), 0));
+        track.add(new MidiEvent(new ShortMessage(ShortMessage.PROGRAM_CHANGE, 1, 42, 0), 0));
 
-        TrackBuilder trackBuilder1 = new TrackBuilder(track, 0, PULSES_PER_NOTE * 2, 80);
-        TrackBuilder trackBuilder2 = new TrackBuilder(track, 1, PULSES_PER_NOTE * 2, 80);
-        trackBuilder1.playChord(new Notes(ChordType.POWER, 60), 2);
-        trackBuilder2.playChord(new Notes(64), 2);
+        TrackBuilder trackBuilder1 = new TrackBuilder(track, 0, PULSES_PER_NOTE * 2, 70);
+        TrackBuilder trackBuilder2 = new TrackBuilder(track, 1, PULSES_PER_NOTE * 2, 70);
+        for(int i = 0; i < 10; i++) {
+            int r = new Random().nextInt(45,66);
+            ChordType ct; int inc;
+            if(new Random().nextInt(0, 2) == 0) {
+                ct = ChordType.MAJOR_DYAD;
+                trackBuilder2.playChord(new Notes(ct, r), 20);
+                trackBuilder1.rest(2);
+                trackBuilder1.arpeggiate(new Notes(r, r+4, r+4), 1);
+                trackBuilder1.rest(2);
+                trackBuilder1.arpeggiate(new Notes(r, r+4, r+4), 1);
+                trackBuilder1.rest(2);
+                trackBuilder1.arpeggiate(new Notes(r, r+4, r+4), 1);
+                trackBuilder1.rest(2);
+                trackBuilder1.arpeggiate(new Notes(r, r+4, r+4), 1);
+            } else {
+                ct = ChordType.MINOR_DYAD;
+                trackBuilder2.playChord(new Notes(ct, r), 20);
+                trackBuilder1.rest(2);
+                trackBuilder1.arpeggiate(new Notes(r, r+3, r+5), 1);
+                trackBuilder1.rest(2);
+                trackBuilder1.arpeggiate(new Notes(r, r+3, r+5), 1);
+                trackBuilder1.rest(2);
+                trackBuilder1.arpeggiate(new Notes(r, r+3, r+5), 1);
+                trackBuilder1.rest(2);
+                trackBuilder1.arpeggiate(new Notes(r, r+3, r+5), 1);
+            }
+
+            trackBuilder1.rest(3);
+            trackBuilder2.rest(3);
+        }
 
         sequencer.setSequence(sequence);
         AtomicBoolean b = new AtomicBoolean(false);
@@ -70,11 +98,10 @@ public class SimplePlayer {
     }
 
     public static void main(String[] args) throws Exception {
-        //playProgressions();
-        playMajorChords();
+        play2();
     }
 
-    private static void playMajorChords() throws MidiUnavailableException, InvalidMidiDataException, InterruptedException {
+    private static void playMajMinChords() throws MidiUnavailableException, InvalidMidiDataException, InterruptedException {
         SimplePlayer.play(trackBuilder -> {
             for(int i = 0; i < 1000; i++) {
                 int root = new Random().nextInt(40, 80);
@@ -139,7 +166,7 @@ public class SimplePlayer {
 
     private static void playScales() throws MidiUnavailableException, InvalidMidiDataException, InterruptedException {
         SimplePlayer.play(trackBuilder -> {
-            for(int i = 0; i < 20; i++) {
+            for(int i = 0; i < 100; i++) {
                 int root = new Random().nextInt(40, 80);
                 trackBuilder.playChord(new Notes(ChordType.MAJOR, root), 1);
                 trackBuilder.playChord(new Notes(ChordType.MAJOR, root + 5), 1);
