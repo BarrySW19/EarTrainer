@@ -71,14 +71,15 @@ public class SimplePlayer {
     }
 
     public static void play(Consumer<TrackBuilder> setUp) throws MidiUnavailableException, InterruptedException, InvalidMidiDataException {
-        for(Instrument i: MidiSystem.getSynthesizer().getAvailableInstruments()) {
-            System.out.println("'" + i.getName() + "'");
+        final Instrument[] instruments = MidiSystem.getSynthesizer().getAvailableInstruments();
+        for(int i = 0; i < instruments.length; i++) {
+            System.out.println(i + "'" + instruments[i].getName() + "'");
         }
         Sequencer sequencer = MidiSystem.getSequencer();
         sequencer.open();
         Sequence sequence = new Sequence(PPQ, PULSES_PER_NOTE);
         Track track = sequence.createTrack();
-        track.add(new MidiEvent(new ShortMessage(ShortMessage.PROGRAM_CHANGE, 0, 0, 0), 0));
+        track.add(new MidiEvent(new ShortMessage(ShortMessage.PROGRAM_CHANGE, 0, 24, 0), 0));
 
         TrackBuilder trackBuilder = new TrackBuilder(track, 0, PULSES_PER_NOTE * 2, 80);
         setUp.accept(trackBuilder);
@@ -98,7 +99,48 @@ public class SimplePlayer {
     }
 
     public static void main(String[] args) throws Exception {
-        play2();
+        playDyad();
+    }
+
+    private static void playDyad() throws MidiUnavailableException, InvalidMidiDataException, InterruptedException {
+        SimplePlayer.play(trackBuilder -> {
+            int root = 56;
+            ChordType chordType = ChordType.MAJOR_DYAD;
+            trackBuilder.arpeggiate(new Notes(chordType, root), 1);
+            for(int i = 0; i < 50; i++) {
+                trackBuilder.playChord(new Notes(chordType, root), 2);
+                trackBuilder.playChord(new Notes(chordType, root), 2);
+                trackBuilder.playChord(new Notes(chordType, root), 2);
+                trackBuilder.playChord(new Notes(chordType, root), 2);
+                trackBuilder.playChord(new Notes(chordType, root), 2);
+//                trackBuilder.playChord(new Notes(ChordType.MINOR, root), 2);
+//                trackBuilder.rest();
+            }
+        });
+    }
+
+    private static void playMajors() throws MidiUnavailableException, InvalidMidiDataException, InterruptedException {
+        SimplePlayer.play(trackBuilder -> {
+            for(int i = 0; i < 150; i++) {
+                int root = new Random().nextInt(36, 76);
+                trackBuilder.playChord(new Notes(ChordType.MAJOR, root), 2);
+                trackBuilder.arpeggiate(new Notes(ChordType.MAJOR_DYAD, root), 1);
+                trackBuilder.playChord(new Notes(ChordType.MAJOR, root), 2);
+                trackBuilder.rest();
+            }
+        });
+    }
+
+    private static void playMinors() throws MidiUnavailableException, InvalidMidiDataException, InterruptedException {
+        SimplePlayer.play(trackBuilder -> {
+            for(int i = 0; i < 150; i++) {
+                int root = new Random().nextInt(36, 76);
+                trackBuilder.playChord(new Notes(ChordType.MINOR, root), 2);
+                trackBuilder.arpeggiate(new Notes(ChordType.MINOR_DYAD, root), 1);
+                trackBuilder.playChord(new Notes(ChordType.MINOR, root), 2);
+                trackBuilder.rest();
+            }
+        });
     }
 
     private static void playMajMinChords() throws MidiUnavailableException, InvalidMidiDataException, InterruptedException {
@@ -142,11 +184,12 @@ public class SimplePlayer {
 
     private static void playProgressions() throws MidiUnavailableException, InvalidMidiDataException, InterruptedException {
         SimplePlayer.play(trackBuilder -> {
-            for(int i = 0; i < 200; i++) {
-                int root = new Random().nextInt(40, 80);
+            for(int i = 0; i < 100; i++) {
+                int root = new Random().nextInt(36, 76);
                 if(new Random().nextInt(0, 2) == 0) {
                     trackBuilder.playChord(new Notes(ChordType.MAJOR, root), 2);
-                    trackBuilder.playChord(new Notes(ChordType.MAJOR, root + 5), 2);
+                    trackBuilder.playChord(new Notes(ChordType.MAJOR, root), 1);
+                    trackBuilder.playChord(new Notes(ChordType.MAJOR, root + 5), 1);
                     trackBuilder.rest();
                     trackBuilder.playChord(new Notes(ChordType.MAJOR, root + 5), 1);
                     trackBuilder.playChord(new Notes(ChordType.MAJOR, root + 7), 1);
@@ -154,7 +197,8 @@ public class SimplePlayer {
                     trackBuilder.rest(2);
                 } else {
                     trackBuilder.playChord(new Notes(ChordType.MAJOR, root), 2);
-                    trackBuilder.playChord(new Notes(ChordType.MAJOR, root + 7), 2);
+                    trackBuilder.playChord(new Notes(ChordType.MAJOR, root), 1);
+                    trackBuilder.playChord(new Notes(ChordType.MAJOR, root + 7), 1);
                     trackBuilder.rest();
                     trackBuilder.playChord(new Notes(ChordType.MAJOR, root + 7), 1);
                     trackBuilder.playChord(new Notes(ChordType.MAJOR, root), 1);
@@ -166,8 +210,8 @@ public class SimplePlayer {
 
     private static void playScales() throws MidiUnavailableException, InvalidMidiDataException, InterruptedException {
         SimplePlayer.play(trackBuilder -> {
-            for(int i = 0; i < 100; i++) {
-                int root = new Random().nextInt(40, 80);
+            for(int i = 0; i < 50; i++) {
+                int root = new Random().nextInt(36, 76);
                 trackBuilder.playChord(new Notes(ChordType.MAJOR, root), 1);
                 trackBuilder.playChord(new Notes(ChordType.MAJOR, root + 5), 1);
                 trackBuilder.playChord(new Notes(ChordType.MAJOR, root + 7), 1);

@@ -6,6 +6,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.ShortMessage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static javax.sound.midi.ShortMessage.NOTE_OFF;
 import static javax.sound.midi.ShortMessage.NOTE_ON;
@@ -23,7 +24,7 @@ public class MidiUtils {
     private static List<ShortMessage> createMessages(final int[] notes, final int channel, final int velocity, final int command) throws InvalidMidiDataException {
         final List<ShortMessage> messages = new ArrayList<>();
         for (int i: notes) {
-            messages.add(new ShortMessage(command, channel, i, velocity));
+            messages.add(new ShortMessage(command, channel, i, velocity + new Random().nextInt(-30, 31)));
         }
         return messages;
     }
